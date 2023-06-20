@@ -14,32 +14,40 @@ const (
 	empty   = ""
 )
 
-func FieldForPlaying(field [3][3]string) {
+type GameSession struct {
+	field [3][3]string
+}
+
+func NewGameSession() *GameSession {
+	return &GameSession{field: [3][3]string{}}
+
+}
+func (gs *GameSession) FieldForPlaying() {
 	for i := 0; i < 3; i++ {
-		fmt.Printf("{ %s } { %s } { %s }\n", field[i][0], field[i][1], field[i][2])
+		fmt.Printf("{ %s } { %s } { %s }\n", gs.field[i][0], gs.field[i][1], gs.field[i][2])
 
 	}
 }
 
-func CheckWin(field [3][3]string) bool {
+func (gs *GameSession) CheckWin() bool {
 	for i := 0; i < 3; i++ {
-		if field[0][0] == field[0][1] && field[0][0] == field[0][2] && field[0][0] != empty && field[0][1] != empty && field[0][2] != empty {
+		if gs.field[0][0] == gs.field[0][1] && gs.field[0][0] == gs.field[0][2] && gs.field[0][0] != empty && gs.field[0][1] != empty && gs.field[0][2] != empty {
 			return true
-		} else if field[1][0] == field[1][1] && field[1][0] == field[1][2] && field[1][0] != empty && field[1][1] != empty && field[1][2] != empty {
+		} else if gs.field[1][0] == gs.field[1][1] && gs.field[1][0] == gs.field[1][2] && gs.field[1][0] != empty && gs.field[1][1] != empty && gs.field[1][2] != empty {
 			return true
-		} else if field[2][0] == field[2][1] && field[2][0] == field[2][2] && field[2][0] != empty && field[2][1] != empty && field[2][2] != empty {
+		} else if gs.field[2][0] == gs.field[2][1] && gs.field[2][0] == gs.field[2][2] && gs.field[2][0] != empty && gs.field[2][1] != empty && gs.field[2][2] != empty {
 			return true
-		} else if field[0][0] == field[1][0] && field[0][0] == field[2][0] && field[0][0] != empty && field[1][0] != empty && field[2][0] != empty {
+		} else if gs.field[0][0] == gs.field[1][0] && gs.field[0][0] == gs.field[2][0] && gs.field[0][0] != empty && gs.field[1][0] != empty && gs.field[2][0] != empty {
 			return true
-		} else if field[0][1] == field[1][1] && field[2][1] == field[0][1] && field[0][1] != empty && field[1][1] != empty && field[2][1] != empty {
+		} else if gs.field[0][1] == gs.field[1][1] && gs.field[2][1] == gs.field[0][1] && gs.field[0][1] != empty && gs.field[1][1] != empty && gs.field[2][1] != empty {
 			return true
-		} else if field[0][2] == field[1][2] && field[2][2] == field[0][2] && field[0][2] != empty && field[1][2] != empty && field[2][2] != empty {
+		} else if gs.field[0][2] == gs.field[1][2] && gs.field[2][2] == gs.field[0][2] && gs.field[0][2] != empty && gs.field[1][2] != empty && gs.field[2][2] != empty {
 			return true
 		}
 
-		if field[0][0] == field[1][1] && field[0][0] == field[2][2] && field[0][0] != empty && field[1][1] != empty && field[2][2] != empty {
+		if gs.field[0][0] == gs.field[1][1] && gs.field[0][0] == gs.field[2][2] && gs.field[0][0] != empty && gs.field[1][1] != empty && gs.field[2][2] != empty {
 			return true
-		} else if field[2][0] == field[1][1] && field[2][0] == field[0][2] && field[2][0] != empty && field[2][1] != empty && field[0][2] != empty {
+		} else if gs.field[2][0] == gs.field[1][1] && gs.field[2][0] == gs.field[0][2] && gs.field[2][0] != empty && gs.field[2][1] != empty && gs.field[0][2] != empty {
 			return true
 		}
 
@@ -47,10 +55,10 @@ func CheckWin(field [3][3]string) bool {
 	return false
 }
 
-func CheckDraw(field [3][3]string) bool {
+func (gs *GameSession) CheckDraw() bool {
 	for i := 0; i < 3; i++ {
 		for j := 0; j < 3; j++ {
-			if field[i][j] == empty {
+			if gs.field[i][j] == empty {
 				return false
 			}
 		}
@@ -58,15 +66,15 @@ func CheckDraw(field [3][3]string) bool {
 	return true
 }
 
-func ClearField(field *[3][3]string) {
+func (gs *GameSession) ClearField() {
 	for i := 0; i < 3; i++ {
 		for j := 0; j < 3; j++ {
-			field[i][j] = empty
+			gs.field[i][j] = empty
 		}
 	}
 }
 
-func MakeStep(field *[3][3]string, randomPlayer int, scores map[int]int) map[int]int {
+func (gs *GameSession) MakeStep(randomPlayer int, scores map[int]int) map[int]int {
 	var row, col int
 
 	for {
@@ -81,19 +89,19 @@ func MakeStep(field *[3][3]string, randomPlayer int, scores map[int]int) map[int
 			continue
 		}
 
-		if field[row][col] != empty {
+		if gs.field[row][col] != empty {
 			fmt.Println("This cell is already occupied. Choose another one!")
 			continue
 		}
 
 		fmt.Println("You chose:", row, col)
 		if randomPlayer == player1 {
-			field[row][col] = X
+			gs.field[row][col] = X
 		} else if randomPlayer == player2 {
-			field[row][col] = O
+			gs.field[row][col] = O
 		}
 
-		FieldForPlaying(*field)
+		gs.FieldForPlaying()
 
 		if randomPlayer == player1 {
 			randomPlayer = player2
@@ -101,7 +109,7 @@ func MakeStep(field *[3][3]string, randomPlayer int, scores map[int]int) map[int
 			randomPlayer = player1
 		}
 
-		if CheckWin(*field) {
+		if gs.CheckWin() {
 			fmt.Println("Player", randomPlayer, "wins!")
 			if player1 == randomPlayer {
 				scores[1]++
@@ -109,7 +117,7 @@ func MakeStep(field *[3][3]string, randomPlayer int, scores map[int]int) map[int
 				scores[2]++
 			}
 			break
-		} else if CheckDraw(*field) {
+		} else if gs.CheckDraw() {
 			fmt.Println("Draw!")
 			scores[3]++
 			break
@@ -124,7 +132,7 @@ func main() {
 	fmt.Println("TIC-TAC-TOE \n")
 	rand.Seed(time.Now().UnixNano())
 
-	field := [3][3]string{}
+	gs := NewGameSession()
 	scores := map[int]int{
 		1: 0,
 		2: 0,
@@ -135,8 +143,8 @@ func main() {
 		var newGame string
 		randomPlayer := rand.Intn(2) + 1
 
-		FieldForPlaying(field)
-		scores = MakeStep(&field, randomPlayer, scores)
+		gs.FieldForPlaying()
+		gs.MakeStep(randomPlayer, scores)
 
 		fmt.Println("Player1 wins:", scores[1])
 		fmt.Println("Player2 wins:", scores[2])
@@ -149,7 +157,7 @@ func main() {
 			break
 		}
 
-		ClearField(&field)
-		FieldForPlaying(field)
+		gs.ClearField()
+		gs.FieldForPlaying()
 	}
 }

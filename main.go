@@ -31,23 +31,23 @@ func (gs *GameSession) FieldForPlaying() {
 
 func (gs *GameSession) CheckWin() bool {
 	for i := 0; i < 3; i++ {
-		if gs.field[0][0] == gs.field[0][1] && gs.field[0][0] == gs.field[0][2] && gs.field[0][0] != empty && gs.field[0][1] != empty && gs.field[0][2] != empty {
+		if gs.field[0][0] == gs.field[0][1] && gs.field[0][0] == gs.field[0][2] && gs.field[0][0] != empty {
 			return true
-		} else if gs.field[1][0] == gs.field[1][1] && gs.field[1][0] == gs.field[1][2] && gs.field[1][0] != empty && gs.field[1][1] != empty && gs.field[1][2] != empty {
+		} else if gs.field[1][0] == gs.field[1][1] && gs.field[1][0] == gs.field[1][2] && gs.field[1][0] != empty {
 			return true
-		} else if gs.field[2][0] == gs.field[2][1] && gs.field[2][0] == gs.field[2][2] && gs.field[2][0] != empty && gs.field[2][1] != empty && gs.field[2][2] != empty {
+		} else if gs.field[2][0] == gs.field[2][1] && gs.field[2][0] == gs.field[2][2] && gs.field[2][0] != empty {
 			return true
-		} else if gs.field[0][0] == gs.field[1][0] && gs.field[0][0] == gs.field[2][0] && gs.field[0][0] != empty && gs.field[1][0] != empty && gs.field[2][0] != empty {
+		} else if gs.field[0][0] == gs.field[1][0] && gs.field[0][0] == gs.field[2][0] && gs.field[0][0] != empty {
 			return true
-		} else if gs.field[0][1] == gs.field[1][1] && gs.field[2][1] == gs.field[0][1] && gs.field[0][1] != empty && gs.field[1][1] != empty && gs.field[2][1] != empty {
+		} else if gs.field[0][1] == gs.field[1][1] && gs.field[2][1] == gs.field[0][1] && gs.field[0][1] != empty {
 			return true
-		} else if gs.field[0][2] == gs.field[1][2] && gs.field[2][2] == gs.field[0][2] && gs.field[0][2] != empty && gs.field[1][2] != empty && gs.field[2][2] != empty {
+		} else if gs.field[0][2] == gs.field[1][2] && gs.field[2][2] == gs.field[0][2] && gs.field[0][2] != empty {
 			return true
 		}
 
-		if gs.field[0][0] == gs.field[1][1] && gs.field[0][0] == gs.field[2][2] && gs.field[0][0] != empty && gs.field[1][1] != empty && gs.field[2][2] != empty {
+		if gs.field[0][0] == gs.field[1][1] && gs.field[0][0] == gs.field[2][2] && gs.field[0][0] != empty {
 			return true
-		} else if gs.field[2][0] == gs.field[1][1] && gs.field[2][0] == gs.field[0][2] && gs.field[2][0] != empty && gs.field[2][1] != empty && gs.field[0][2] != empty {
+		} else if gs.field[2][0] == gs.field[1][1] && gs.field[2][0] == gs.field[0][2] && gs.field[2][0] != empty {
 			return true
 		}
 
@@ -161,3 +161,4 @@ func main() {
 		gs.FieldForPlaying()
 	}
 }
+

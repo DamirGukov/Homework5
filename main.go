@@ -1,164 +1,98 @@
 package main
 
-import (
-	"fmt"
-	"math/rand"
-	"time"
-)
+import "fmt"
 
-const (
-	player1 = 1
-	player2 = 2
-	X       = "X"
-	O       = "0"
-	empty   = ""
-)
-
-type GameSession struct {
-	field [3][3]string
+type Package interface {
+	GetSenderAdress() string
+	GetRecipientAdress() string
+	Send()
 }
 
-func NewGameSession() *GameSession {
-	return &GameSession{field: [3][3]string{}}
-
-}
-func (gs *GameSession) FieldForPlaying() {
-	for i := 0; i < 3; i++ {
-		fmt.Printf("{ %s } { %s } { %s }\n", gs.field[i][0], gs.field[i][1], gs.field[i][2])
-
-	}
+type Box struct {
+	AdressSender    string
+	AdressRecipient string
 }
 
-func (gs *GameSession) CheckWin() bool {
-	for i := 0; i < 3; i++ {
-		if gs.field[0][0] == gs.field[0][1] && gs.field[0][0] == gs.field[0][2] && gs.field[0][0] != empty {
-			return true
-		} else if gs.field[1][0] == gs.field[1][1] && gs.field[1][0] == gs.field[1][2] && gs.field[1][0] != empty {
-			return true
-		} else if gs.field[2][0] == gs.field[2][1] && gs.field[2][0] == gs.field[2][2] && gs.field[2][0] != empty {
-			return true
-		} else if gs.field[0][0] == gs.field[1][0] && gs.field[0][0] == gs.field[2][0] && gs.field[0][0] != empty {
-			return true
-		} else if gs.field[0][1] == gs.field[1][1] && gs.field[2][1] == gs.field[0][1] && gs.field[0][1] != empty {
-			return true
-		} else if gs.field[0][2] == gs.field[1][2] && gs.field[2][2] == gs.field[0][2] && gs.field[0][2] != empty {
-			return true
-		}
-
-		if gs.field[0][0] == gs.field[1][1] && gs.field[0][0] == gs.field[2][2] && gs.field[0][0] != empty {
-			return true
-		} else if gs.field[2][0] == gs.field[1][1] && gs.field[2][0] == gs.field[0][2] && gs.field[2][0] != empty {
-			return true
-		}
-
-	}
-	return false
+type Envelope struct {
+	AdressSender    string
+	AdressRecipient string
 }
 
-func (gs *GameSession) CheckDraw() bool {
-	for i := 0; i < 3; i++ {
-		for j := 0; j < 3; j++ {
-			if gs.field[i][j] == empty {
-				return false
-			}
-		}
-	}
-	return true
+func (b Box) GetSenderAdress() string {
+	return b.AdressSender
 }
 
-func (gs *GameSession) ClearField() {
-	for i := 0; i < 3; i++ {
-		for j := 0; j < 3; j++ {
-			gs.field[i][j] = empty
-		}
-	}
+func (b Box) GetRecipientAdress() string {
+	return b.AdressRecipient
 }
 
-func (gs *GameSession) MakeStep(randomPlayer int, scores map[int]int) map[int]int {
-	var row, col int
+func (b Box) Send() {
+	fmt.Println("Sending box to:", b.GetRecipientAdress(), "from:", b.GetSenderAdress())
+}
 
-	for {
-		fmt.Print("Player", randomPlayer, " Enter a row in the game field (0-2): ")
-		fmt.Scanln(&row)
+func (e Envelope) GetSenderAdress() string {
+	return e.AdressSender
+}
 
-		fmt.Print("Player", randomPlayer, " Enter a column in the game field (0-2): ")
-		fmt.Scanln(&col)
+func (e Envelope) GetRecipientAdress() string {
+	return e.AdressRecipient
+}
 
-		if row < 0 || row > 2 || col < 0 || col > 2 {
-			fmt.Println("Wrong coordinates. Try again!")
-			continue
-		}
+func (e Envelope) Send() {
+	fmt.Println("Sending envelope to:", e.GetRecipientAdress(), "from:", e.GetSenderAdress())
+}
 
-		if gs.field[row][col] != empty {
-			fmt.Println("This cell is already occupied. Choose another one!")
-			continue
-		}
+type SortingDepartment struct{}
 
-		fmt.Println("You chose:", row, col)
-		if randomPlayer == player1 {
-			gs.field[row][col] = X
-		} else if randomPlayer == player2 {
-			gs.field[row][col] = O
-		}
+func (sd SortingDepartment) SortAndSend(p Package, delivery string, deliverySave map[int]int) {
 
-		gs.FieldForPlaying()
+	fmt.Println("Fast or regular delivery?")
+	fmt.Scan(&delivery)
 
-		if randomPlayer == player1 {
-			randomPlayer = player2
-		} else {
-			randomPlayer = player1
-		}
-
-		if gs.CheckWin() {
-			fmt.Println("Player", randomPlayer, "wins!")
-			if player1 == randomPlayer {
-				scores[1]++
-			} else if player2 == randomPlayer {
-				scores[2]++
-			}
-			break
-		} else if gs.CheckDraw() {
-			fmt.Println("Draw!")
-			scores[3]++
-			break
-		}
+	if delivery == "Fast" || delivery == "fast" {
+		fmt.Println("Sorting box, and sending it by fast deliver")
+		deliverySave[1]++
+		p.Send()
+	} else {
+		fmt.Println("Sorting box, and sending it by regular deliver")
+		deliverySave[2]++
+		p.Send()
 	}
 
-	return scores
+	fmt.Println("Fast or regular delivery?")
+	fmt.Scan(&delivery)
+
+	if delivery == "fast" || delivery == "Fast" {
+		fmt.Println("Sorting envelope, and sending it by fast deliver")
+		deliverySave[1]++
+		p.Send()
+	} else {
+		fmt.Println("Sorting box, and sending it by regular deliver")
+		deliverySave[2]++
+		p.Send()
+	}
 }
 
 func main() {
+	b := Box{
+		AdressSender:    "12 High Street, London, SW1A 1AA",
+		AdressRecipient: "27 Park Avenue, Manchester, M14 5PT",
+	}
 
-	fmt.Println("TIC-TAC-TOE \n")
-	rand.Seed(time.Now().UnixNano())
-
-	gs := NewGameSession()
-	scores := map[int]int{
+	e := Envelope{
+		AdressSender:    "8 Queen's Road, Birmingham, B1 1RD",
+		AdressRecipient: "45 Windsor Gardens, Edinburgh, EH1 2HU",
+	}
+	var delivery string
+	deliverySave := map[int]int{
 		1: 0,
 		2: 0,
-		3: 0,
 	}
 
-	for {
-		var newGame string
-		randomPlayer := rand.Intn(2) + 1
+	sd := SortingDepartment{}
+	sd.SortAndSend(b, delivery, deliverySave)
+	sd.SortAndSend(e, delivery, deliverySave)
 
-		gs.FieldForPlaying()
-		gs.MakeStep(randomPlayer, scores)
-
-		fmt.Println("Player1 wins:", scores[1])
-		fmt.Println("Player2 wins:", scores[2])
-		fmt.Println("Draw:", scores[3])
-
-		fmt.Println("Do you want to start a new game? yes/no")
-		fmt.Scanln(&newGame)
-
-		if newGame != "yes" {
-			break
-		}
-
-		gs.ClearField()
-		gs.FieldForPlaying()
-	}
+	fmt.Println("Fast delivery: ", deliverySave[1])
+	fmt.Println("Regular delivery: ", deliverySave[2])
 }
-
